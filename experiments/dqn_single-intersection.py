@@ -149,7 +149,7 @@ if __name__ == "__main__":
         verbose=1,
     )
 
-    num_episodes = 30
+    num_episodes = 50
 
     # Check if the environment has a num_seconds attribute or parameter
     if hasattr(env, "num_seconds"):
