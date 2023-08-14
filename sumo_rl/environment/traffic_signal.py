@@ -200,6 +200,11 @@ class TrafficSignal:
         self.last_measure = ts_wait
         return reward
 
+    def _average_speed_maximization_reward(self):
+        average_speed = sum(self.get_lanes_average_speed()) / len(self.lanes)
+        reward = average_speed  # Directly proportional to the average speed
+        return reward
+
     def _observation_fn_default(self):
         phase_id = [1 if self.green_phase == i else 0 for i in range(self.num_green_phases)]  # one-hot encoding
         min_green = [0 if self.time_since_last_phase_change < self.min_green + self.yellow_time else 1]
@@ -237,7 +242,7 @@ class TrafficSignal:
         Obs: If there are no vehicles in the intersection, it returns 1.0.
         """
         avg_speed = 0.0
-        vehs = self._get_veh_list()
+        vehs = self._get_veh_list()                   
         if len(vehs) == 0:
             return 1.0
         for v in vehs:
@@ -293,6 +298,14 @@ class TrafficSignal:
             veh_list += self.sumo.lane.getLastStepVehicleIDs(lane)
         return veh_list
 
+    def get_lanes_average_speed(self) -> List[float]:
+        """Returns the average speed of vehicles in the incoming lanes of the intersection."""
+        lanes_average_speed = [
+            self.sumo.lane.getLastStepMeanSpeed(lane)
+            for lane in self.lanes
+        ]
+        return lanes_average_speed
+
     @classmethod
     def register_reward_fn(cls, fn: Callable):
         """Registers a reward function.
@@ -310,4 +323,5 @@ class TrafficSignal:
         "average-speed": _average_speed_reward,
         "queue": _queue_reward,
         "pressure": _pressure_reward,
+        "average-speed-maximization": _average_speed_maximization_reward
     }
