@@ -200,10 +200,10 @@ class TrafficSignal:
         self.last_measure = ts_wait
         return reward
 
-    def _average_speed_maximization_reward(self):
-        average_speed = sum(self.get_lanes_average_speed()) / len(self.lanes)
-        reward = average_speed  # Directly proportional to the average speed
-        return reward
+    # def _average_speed_maximization_reward(self):
+    #     average_speed = sum(self.get_lanes_average_speed()) / len(self.lanes)
+    #     reward = average_speed  # Directly proportional to the average speed
+    #     return reward
 
     def _observation_fn_default(self):
         phase_id = [1 if self.green_phase == i else 0 for i in range(self.num_green_phases)]  # one-hot encoding
@@ -298,13 +298,13 @@ class TrafficSignal:
             veh_list += self.sumo.lane.getLastStepVehicleIDs(lane)
         return veh_list
 
-    def get_lanes_average_speed(self) -> List[float]:
-        """Returns the average speed of vehicles in the incoming lanes of the intersection."""
-        lanes_average_speed = [
-            self.sumo.lane.getLastStepMeanSpeed(lane)
-            for lane in self.lanes
-        ]
-        return lanes_average_speed
+    # def get_lanes_average_speed(self) -> List[float]:
+    #     """Returns the average speed of vehicles in the incoming lanes of the intersection."""
+    #     lanes_average_speed = [
+    #         self.sumo.lane.getLastStepMeanSpeed(lane)
+    #         for lane in self.lanes
+    #     ]
+    #     return lanes_average_speed
 
     @classmethod
     def register_reward_fn(cls, fn: Callable):
@@ -323,5 +323,5 @@ class TrafficSignal:
         "average-speed": _average_speed_reward,
         "queue": _queue_reward,
         "pressure": _pressure_reward,
-        "average-speed-maximization": _average_speed_maximization_reward
+        # "average-speed-maximization": _average_speed_maximization_reward
     }
