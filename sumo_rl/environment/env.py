@@ -378,6 +378,7 @@ class SumoEnvironment(gym.Env):
 
         Only used in case of single-agent environment.
         """
+        # print(self.traffic_signals[self.ts_ids[0]].observation_space)
         return self.traffic_signals[self.ts_ids[0]].observation_space
 
     @property
@@ -390,6 +391,7 @@ class SumoEnvironment(gym.Env):
 
     def observation_spaces(self, ts_id: str):
         """Return the observation space of a traffic signal."""
+        # print(self.traffic_signals[ts_id].observation_space)
         return self.traffic_signals[ts_id].observation_space
 
     def action_spaces(self, ts_id: str) -> gym.spaces.Discrete:

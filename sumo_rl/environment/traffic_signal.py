@@ -198,6 +198,7 @@ class TrafficSignal:
         ts_wait = sum(self.get_accumulated_waiting_time_per_lane()) / 100.0
         reward = self.last_measure - ts_wait
         self.last_measure = ts_wait
+        print(reward)
         return reward
 
     def _average_speed_maximization_reward(self):
@@ -210,7 +211,9 @@ class TrafficSignal:
         min_green = [0 if self.time_since_last_phase_change < self.min_green + self.yellow_time else 1]
         density = self.get_lanes_density()
         queue = self.get_lanes_queue()
-        observation = np.array(phase_id + min_green + density + queue, dtype=np.float32)
+        speed = self.get_lanes_average_speed()
+        # observation = np.array(phase_id + min_green + density + queue, dtype=np.float32)
+        observation = np.array(phase_id + min_green + density + queue + speed, dtype=np.float32)
         return observation
 
     def get_accumulated_waiting_time_per_lane(self) -> List[float]:
@@ -298,13 +301,23 @@ class TrafficSignal:
             veh_list += self.sumo.lane.getLastStepVehicleIDs(lane)
         return veh_list
 
+    
+    def normalize_against_max_speed(self, lanes_average_speed: List[float], max_permitted_speed: float = 70.0) -> List[float]:
+        """Normalize the lanes average speed against the given max permitted speed."""
+        normalized_speeds = [speed / max_permitted_speed for speed in lanes_average_speed]
+        return normalized_speeds
+
     def get_lanes_average_speed(self) -> List[float]:
-        """Returns the average speed of vehicles in the incoming lanes of the intersection."""
-        lanes_average_speed = [
-            self.sumo.lane.getLastStepMeanSpeed(lane)
-            for lane in self.lanes
-        ]
-        return lanes_average_speed
+        """Returns the normalized average speed of vehicles in the incoming lanes of the intersection."""
+        lanes_average_speed = [self.sumo.lane.getLastStepMeanSpeed(lane) for lane in self.lanes]
+        return self.normalize_against_max_speed(lanes_average_speed)
+
+        # """Returns the average speed of vehicles in the incoming lanes of the intersection."""
+        # lanes_average_speed = [
+        #     self.sumo.lane.getLastStepMeanSpeed(lane)
+        #     for lane in self.lanes
+        # ]
+        # return lanes_average_speed
 
     @classmethod
     def register_reward_fn(cls, fn: Callable):
