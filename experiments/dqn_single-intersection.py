@@ -1,4 +1,4 @@
-This is the training code, comment out the model.save if not need can be uncommented when needed
+# This is the training code, comment out the model.save if not need can be uncommented when needed
 
 import os
 import sys
