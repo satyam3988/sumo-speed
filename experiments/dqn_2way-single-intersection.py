@@ -1,4 +1,4 @@
-# # This is the training code, comment out the model.save if not need can be uncommented when needed
+# # # This is the training code, comment out the model.save if not need can be uncommented when needed
 
 # import os
 # import sys
@@ -64,7 +64,7 @@
 #     total_timesteps = num_episodes * timesteps_per_episode
 
 #     model.learn(total_timesteps=total_timesteps)
-#     model.save("saved_models/2way-single-intersection/dqn/model1")
+#     model.save("saved_models/2way-single-intersection/dqn/model2")
 
 
 # Below this is the code for testing phase using the model that has been saved
@@ -105,7 +105,7 @@ if __name__ == "__main__":
         out_csv_name="outputs/2way-single-intersection/dqn",
         single_agent=True,
         use_gui=True,
-        num_seconds=40000,
+        num_seconds=1000000,
     )
 
     # Load the saved model
